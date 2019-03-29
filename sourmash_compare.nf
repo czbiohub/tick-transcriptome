@@ -1,21 +1,22 @@
-signatures = params.signatures ?: []
-signatures_ch = Channel(signatures)
+params.directory = "s3://tick-genome/rna/pacbio-isoseq/2018-06-07/fake_genome_and_transcriptome/sourmash-kmer-signatures/*.sig"
+Channel.fromPath(params.directory)
+	.set{ signatures_ch }
 
 params.ksizes = Channel.from([15, 21, 27, 33, 51])
-params.molecules = Chanel.from(['dna', 'protein'])
+params.molecules = Channel.from(['dna', 'protein'])
 
 process sourmash_compare_sketches {
 	tag "molecule-${molecule}_ksize-${ksize}_"
 
 	container 'czbiohub/nf-kmer-similarity'
 	publishDir "${params.outdir}/", mode: 'copy'
-	memory { 8.GB * task.attempt }
+	memory { 1024.GB * task.attempt }
 	errorStrategy 'retry'
   maxRetries 5
 
 	input:
-	each ksize from ksizes
-	each molecule from molecules
+	each ksize from params.ksizes
+	each molecule from params.molecules
 	file signatures_ch
 
 	output:
@@ -27,7 +28,7 @@ process sourmash_compare_sketches {
         --ksize $ksize \
         --$molecule \
         --csv similarities_molecule-${molecule}_ksize-${ksize}.csv \
-        $signatures_ch
+        $params.signatures_ch
 	"""
 
 }
