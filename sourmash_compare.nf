@@ -28,7 +28,7 @@ process sourmash_compare_sketches {
         --ksize $ksize \
         --$molecule \
         --csv similarities_molecule-${molecule}_ksize-${ksize}.csv \
-        $params.signatures_ch
+        $signatures_ch
 	"""
 
 }
