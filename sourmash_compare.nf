@@ -6,7 +6,7 @@ params.ksizes = Channel.from([15, 21, 27, 33, 51])
 params.molecules = Channel.from(['dna', 'protein'])
 
 process sourmash_compare_sketches {
-	tag "molecule-${molecule}_ksize-${ksize}_"
+	tag "molecule-${molecule}_ksize-${ksize}"
 
 	container 'czbiohub/nf-kmer-similarity'
 	publishDir "${params.outdir}/", mode: 'copy'
